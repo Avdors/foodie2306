@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">foodie2306</string>
+    <string name="buy">В корзину за %1$s ₽</string>
+    <string name="weight">Вес</string>
+    <string name="enerdy">Энерг. ценность</string>
+    <string name="kkal">%1$s ккал</string>
+    <string name="protein">Белки</string>
+    <string name="fat">Жиры</string>
+    <string name="sugar">Углеводы</string>
+    <string name="ok">Готово</string>
+    <string name="choose">Подобрать блюда</string>
+    <string name="no_filter">Таких блюд нет :( Попробуйте изменить фильтры</string>
+    <string name="search">Искать</string>
+    <string name="nothing">Ничего не нашлось :(</string>
+    <string name="basket">Корзина</string>
+    <string name="price">%1$s ₽</string>
+    <string name="twoprice">%1$s ₽</string>
+    <string name="sum">%1$s ₽</string>
+    <string name="order">Заказать за %1$s ₽</string>
+    <string name="empty">Пусто, выберите блюда в каталоге :)</string>
+    <string name="pricedb">%1$s ₽</string>
+    <string name="find_food">Найти блюдо</string>
+</resources>
