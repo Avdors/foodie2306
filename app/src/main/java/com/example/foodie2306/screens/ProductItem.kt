@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,8 +34,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.domain.model.Product
+import com.example.domain.model.ProductFromDb
 import com.example.foodie2306.R
 import com.example.foodie2306.viewmodel.DbViewModel
+import com.example.foodie2306.viewmodel.MainEvent
 import com.example.foodie2306.viewmodel.ProductsViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -43,11 +46,13 @@ import org.koin.androidx.compose.koinViewModel
 fun ProductItem(
     item : Product,
     modifier: Modifier,
-    dbViewModel: DbViewModel,
+    //dbViewModel: DbViewModel,
+    dbList: State<List<ProductFromDb>>,
+    onEvent: (MainEvent) -> Unit,
     onClick:() ->Unit
 ) {
 
-    val dbList = dbViewModel.list.collectAsState()
+   // val dbList = dbViewModel.list.collectAsState()
 
     val foundItem = dbList.value.find {
         it.id == item.id
@@ -111,14 +116,18 @@ fun ProductItem(
                 if(foundItem == null) {
                     Button(
                         onClick = {
-                            dbViewModel.upsert(
-                                count = 1,
-                                id = item.id,
-                                name = item.name,
-                                price = item.price_current,
-                                oldPrice = item.price_old,
-                                image = item.image
-                            )
+//                            dbViewModel.upsert(
+//                                count = 1,
+//                                id = item.id,
+//                                name = item.name,
+//                                price = item.price_current,
+//                                oldPrice = item.price_old,
+//                                image = item.image
+//                            )
+
+       //                     dbViewModel.upsertItem(item, 1) // avd
+                            onEvent(MainEvent.Upsert(item, 1))
+
                         },
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
@@ -161,7 +170,7 @@ fun ProductItem(
                             contentDescription = null,
                             modifier = Modifier
                                 .align(Alignment.CenterStart)
-                                .clickable { dbViewModel.minusCount(foundItem) })
+                                .clickable { onEvent(MainEvent.MinusCount(foundItem)) })
                         Text(
                             text = foundItem.count.toString(),
                             modifier = Modifier.align(Alignment.Center)
@@ -171,7 +180,7 @@ fun ProductItem(
                             contentDescription = null,
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
-                                .clickable { dbViewModel.plusCount(foundItem) }
+                                .clickable { onEvent(MainEvent.PlusCount(foundItem))  }
                         )
                     }
                 }
@@ -180,3 +189,25 @@ fun ProductItem(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun PreviewProductNewItem() {
+    val sampleProduct = Product(
+        carbohydrates_per_100_grams = 20.00,
+        category_id = 664,
+        description = "This is a sample product description.",
+        energy_per_100_grams = 250.00,
+        fats_per_100_grams = 5.50,
+        id = 77,
+        image = "photo_product.png", // Placeholder image URL
+        measure = 200,
+        measure_unit = "g",
+        name = "Sample Product",
+        price_current = 12000,
+        price_old = 15000,
+        proteins_per_100_grams = 10.00,
+        tag_ids = listOf(2, 3, 4)
+    )
+
+    ProductItemPreview(item = sampleProduct)
+}

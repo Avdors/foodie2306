@@ -133,7 +133,8 @@ fun SearchScreen(
                                     stiffness = Spring.StiffnessLow
                                     )
                                     ),
-                                    dbViewModel = dbViewModel,
+                                    dbList = dbViewModel.list.collectAsState(),
+                                    onEvent = dbViewModel::onEvent,
                                     // Обратный вызов при нажатии на продукт, обновляющий productToHandle, showList и showDetails.
                                     onClick = {
                                         productToHandle = product

@@ -380,13 +380,15 @@ fun MainScreen(
                                             stiffness = Spring.StiffnessLow
                                         )
                                     ),
-                                    dbViewModel = dbViewModel,
+                                    dbList = dbViewModel.list.collectAsState(),
+                                    onEvent = dbViewModel::onEvent,
                                     onClick = {
                                         productToHandle = product
                                         showList = false
                                         showDetails = true
 
                                     }
+
                                 )
                             }
                         }

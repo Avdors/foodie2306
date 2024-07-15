@@ -3,6 +3,7 @@ package com.example.foodie2306.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.database.MyDataBase
+import com.example.domain.model.Product
 import com.example.domain.model.ProductFromDb
 import com.example.domain.usecase.DbListUseCase
 import com.example.domain.usecase.DeleteUseCase
@@ -32,6 +33,17 @@ class DbViewModel(
     }
     }
 
+
+    fun onEvent(event: MainEvent){
+    when(event){
+        is MainEvent.Upsert -> { upsertItem(event.itemProduct, event.count) }
+        is MainEvent.MinusCount -> {minusCount(event.itemProduct)}
+        is MainEvent.PlusCount -> {plusCount(event.itemProduct)}
+    }
+    }
+
+
+
     fun upsert( // здесь добавляем новые данные, здесь можно наполнить БД тестовыми к примеру
         count: Int,
         id: Int,
@@ -52,6 +64,22 @@ class DbViewModel(
             upsertItemUseCase.execute(item)
         }
     }
+
+    fun upsertItem(itemProduct: Product, count: Int) {
+        viewModelScope.launch {
+            val item = ProductFromDb(
+                count = count,
+                id = itemProduct.id,
+                name = itemProduct.name,
+                price = itemProduct.price_current,
+                oldPrice = itemProduct.price_old,
+                image = itemProduct.image
+            )
+            upsertItemUseCase.execute(item)
+        }
+    }
+
+
 
     fun plusCount(item: ProductFromDb) { // вот тут пока не понял Count зачем
         viewModelScope.launch {
