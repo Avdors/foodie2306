@@ -39,6 +39,7 @@ class DbViewModel(
         is MainEvent.Upsert -> { upsertItem(event.itemProduct, event.count) }
         is MainEvent.MinusCount -> {minusCount(event.itemProduct)}
         is MainEvent.PlusCount -> {plusCount(event.itemProduct)}
+        is MainEvent.ClearDb -> {clearDb()}
     }
     }
 

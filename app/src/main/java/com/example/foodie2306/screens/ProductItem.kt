@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,8 +62,8 @@ fun ProductItem(
     Card(
         modifier = modifier
             .padding(3.dp)
-            .width(167.dp)
-            .height(290.dp)
+            .fillMaxWidth(0.5f)
+            //.fillMaxHeight(0.5f)
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
             contentColor = Color(0xFFF5F5F5)
@@ -70,7 +71,7 @@ fun ProductItem(
     ) {
         Column(modifier = Modifier.fillMaxSize()
             ) {
-            Box(modifier = Modifier.fillMaxSize()){
+            Box(modifier = Modifier.fillMaxWidth()){
                 AsyncImage(
                     model = item.image,
                     contentDescription = "image",
@@ -90,7 +91,7 @@ fun ProductItem(
                 Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                     Text(
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 2,
+                        maxLines = 1,
                         color = Color.Black,
                         fontFamily = FontFamily(Font(R.font.roboto)),
                         fontSize = 12.sp,
@@ -114,49 +115,46 @@ fun ProductItem(
                     }
                 }
                 if(foundItem == null) {
-                    Button(
-                        onClick = {
-//                            dbViewModel.upsert(
-//                                count = 1,
-//                                id = item.id,
-//                                name = item.name,
-//                                price = item.price_current,
-//                                oldPrice = item.price_old,
-//                                image = item.image
-//                            )
-
-       //                     dbViewModel.upsertItem(item, 1) // avd
-                            onEvent(MainEvent.Upsert(item, 1))
-
-                        },
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .width(160.dp)
-                            .padding(bottom = 10.dp)
-                            .height(40.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .padding(top = 60.dp)
                     ) {
-                        Row {
-                            Text(
-                                text = stringResource(R.string.price, item.price_current / 100),
-                                color = Color.Black,
-                                fontSize = 16.sp,
-                                fontFamily = FontFamily(Font(R.font.roboto))
-                            )
-                            if (item.price_old != null) {
+                        Button(
+                            onClick = {
+
+                                onEvent(MainEvent.Upsert(item, 1))
+
+                            },
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth(0.9f)
+                                .padding(bottom = 10.dp)
+                                .height(40.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                        ) {
+                            Row {
                                 Text(
-                                    text = stringResource(
-                                        R.string.twoprice,
-                                        item.price_old!! / 100
-                                    ),
-                                    modifier = Modifier.padding(start = 5.dp),
-                                    textDecoration = TextDecoration.LineThrough,
-                                    color = Color.Gray,
-                                    fontSize = 14.sp,
+                                    text = stringResource(R.string.price, item.price_current / 100),
+                                    color = Color.Black,
+                                    fontSize = 16.sp,
                                     fontFamily = FontFamily(Font(R.font.roboto))
                                 )
+                                if (item.price_old != null) {
+                                    Text(
+                                        text = stringResource(
+                                            R.string.twoprice,
+                                            item.price_old!! / 100
+                                        ),
+                                        modifier = Modifier.padding(start = 5.dp),
+                                        textDecoration = TextDecoration.LineThrough,
+                                        color = Color.Gray,
+                                        fontSize = 14.sp,
+                                        fontFamily = FontFamily(Font(R.font.roboto))
+                                    )
+                                }
                             }
                         }
                     }
@@ -164,6 +162,7 @@ fun ProductItem(
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
+                        .padding(top = 60.dp)
                     ){
                         Image(
                             painter = painterResource(id = R.drawable.minus),

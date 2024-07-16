@@ -42,6 +42,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,8 +67,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.data.states.States
 import com.example.domain.model.Product
+import com.example.domain.model.ProductFromDb
 import com.example.foodie2306.R
 import com.example.foodie2306.viewmodel.DbViewModel
+import com.example.foodie2306.viewmodel.MainEvent
 import com.example.foodie2306.viewmodel.ProductsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -79,10 +82,12 @@ fun MainScreen(
     modifier: Modifier,
     navController: NavController,
     productsViewModel: ProductsViewModel,
-    dbViewModel : DbViewModel = koinViewModel() //В данном случае функция koinViewModel() создаёт экземпляр класса DbViewModel, который будет использоваться в функции @Composable fun MainScreen().
-) {
+   // dbViewModel : DbViewModel = koinViewModel() //В данном случае функция koinViewModel() создаёт экземпляр класса DbViewModel, который будет использоваться в функции @Composable fun MainScreen().
+    dbList: State<List<ProductFromDb>>,
+    onEvent: (MainEvent) -> Unit
+    ) {
 
-    val dbList = dbViewModel.list.collectAsState()  //collectAsState() позволяет преобразовать поток данных (Flow) в объект состояния (State). Это полезно, когда вы хотите использовать данные из потока в своём пользовательском интерфейсе.
+    //val dbList = dbViewModel.list.collectAsState()  //collectAsState() позволяет преобразовать поток данных (Flow) в объект состояния (State). Это полезно, когда вы хотите использовать данные из потока в своём пользовательском интерфейсе.
 
     val sum = dbList.value.sumOf {
         it.price * it.count
@@ -380,8 +385,8 @@ fun MainScreen(
                                             stiffness = Spring.StiffnessLow
                                         )
                                     ),
-                                    dbList = dbViewModel.list.collectAsState(),
-                                    onEvent = dbViewModel::onEvent,
+                                    dbList = dbList,
+                                    onEvent = onEvent,
                                     onClick = {
                                         productToHandle = product
                                         showList = false
@@ -437,16 +442,18 @@ fun MainScreen(
     }
         DetailScreen(modifier = modifier, item = it, onButtonClick = {
         if(foundItem == null){
-            dbViewModel.upsert(
-                count = 1,
-                id = productToHandle!!.id,
-                price = productToHandle!!.price_current,
-                oldPrice = productToHandle!!.price_old,
-                name = productToHandle!!.name,
-                image = productToHandle!!.image
-            )
+//            dbViewModel.upsert(
+//                count = 1,
+//                id = productToHandle!!.id,
+//                price = productToHandle!!.price_current,
+//                oldPrice = productToHandle!!.price_old,
+//                name = productToHandle!!.name,
+//                image = productToHandle!!.image
+//            )
+            onEvent(MainEvent.Upsert(productToHandle as Product, 1))
         } else {
-            dbViewModel.plusCount(foundItem)
+           // dbViewModel.plusCount(foundItem)
+            onEvent(MainEvent.PlusCount(foundItem))
         }
             showDetails = false
             showList = true
@@ -466,27 +473,17 @@ fun MainScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewMainScreen() {
-//    val sampleProduct = Product(
-//        carbohydrates_per_100_grams = 20.00,
-//        category_id = 664,
-//        description = "This is a sample product description.",
-//        energy_per_100_grams = 250.00,
-//        fats_per_100_grams = 5.50,
-//        id = 77,
-//        image = "photo_product.png", // Use a placeholder image URL
-//        measure = 200,
-//        measure_unit = "g",
-//        name = "Sample Product",
-//        price_current = 12000,
-//        price_old = 15000,
-//        proteins_per_100_grams = 10.00,
-//        tag_ids = listOf(2,3,4)
-//
-//
-//    )
 
+    val sampleDbList = remember {
+        mutableStateOf(
+            listOf(
+                ProductFromDb(1, "Product 1", 1000, 2000, 1, "image_url"),
+                ProductFromDb(2, "Product 2", 500, 1000, 1, "image_url")
+            )
+        )
+    }
     val navController = rememberNavController()
     val productsViewModel = koinViewModel<ProductsViewModel>()
-   // MainScreen(modifier = Modifier, navController = navController, productsViewModel = productsViewModel)
+    MainScreen(modifier = Modifier, navController = navController, productsViewModel = productsViewModel, dbList = sampleDbList, onEvent = {})
 }
 

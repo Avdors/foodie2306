@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,11 +29,14 @@ import coil.compose.AsyncImage
 import com.example.domain.model.ProductFromDb
 import com.example.foodie2306.R
 import com.example.foodie2306.viewmodel.DbViewModel
+import com.example.foodie2306.viewmodel.MainEvent
 
 @Composable
 fun DbItem(
     productFromDb: ProductFromDb,
-    dbViewModel: DbViewModel,
+   // dbViewModel: DbViewModel,
+    dbList: State<List<ProductFromDb>>,
+    onEvent: (MainEvent) -> Unit,
     modifier: Modifier
 ) {
     Box(modifier = modifier
@@ -59,7 +63,7 @@ fun DbItem(
                 Image(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
-                        .clickable { dbViewModel.minusCount(productFromDb) },
+                        .clickable { onEvent(MainEvent.MinusCount(productFromDb)) },
                     painter = painterResource(id = R.drawable.minus_gray),
                     contentDescription = null)
                 Text(
@@ -69,7 +73,7 @@ fun DbItem(
                 Image(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
-                        .clickable { dbViewModel.plusCount(productFromDb) },
+                        .clickable { onEvent(MainEvent.PlusCount(productFromDb)) },
                     painter = painterResource(id = R.drawable.plus_gray),
                     contentDescription = null)
             }

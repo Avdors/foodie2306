@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
@@ -19,6 +20,7 @@ import com.example.foodie2306.screens.BasketScreen
 import com.example.foodie2306.screens.MainScreen
 import com.example.foodie2306.screens.SearchScreen
 import com.example.foodie2306.ui.theme.Foodie2306Theme
+import com.example.foodie2306.viewmodel.DbViewModel
 import com.example.foodie2306.viewmodel.ProductsViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
@@ -33,7 +35,7 @@ class MainActivity : ComponentActivity() {
                    KoinContext {
                        val navController = rememberNavController()
                        val productsViewModel = koinViewModel<ProductsViewModel>()
-
+                       val dbViewModel: DbViewModel = koinViewModel()
                        NavHost(navController = navController, startDestination = "animation"){
                            composable(route = "animation"){
                                AnimationScreen(
@@ -50,13 +52,17 @@ class MainActivity : ComponentActivity() {
                                MainScreen(
                                    modifier = Modifier.padding(innerPadding),
                                    navController = navController,
-                                   productsViewModel = productsViewModel
+                                   productsViewModel = productsViewModel,
+                                   dbList = dbViewModel.list.collectAsState(),
+                                   onEvent = dbViewModel::onEvent
                                )
                            }
                            composable(route = "basketScreen"){
                                BasketScreen(
                                    modifier = Modifier.padding(innerPadding),
-                                   navController = navController
+                                   navController = navController,
+                                   dbList = dbViewModel.list.collectAsState(),
+                                   onEvent = dbViewModel::onEvent
                                )
                            }
 

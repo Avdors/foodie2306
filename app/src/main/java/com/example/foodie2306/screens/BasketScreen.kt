@@ -26,19 +26,27 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.domain.model.ProductFromDb
 import com.example.foodie2306.R
 import com.example.foodie2306.viewmodel.DbViewModel
+import com.example.foodie2306.viewmodel.MainEvent
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -47,9 +55,11 @@ import org.koin.androidx.compose.koinViewModel
 fun BasketScreen(
     modifier: Modifier,
     navController: NavController,
-    dbViewModel: DbViewModel = koinViewModel()
+    //dbViewModel: DbViewModel = koinViewModel()
+    dbList: State<List<ProductFromDb>>,
+    onEvent: (MainEvent) -> Unit
 ) {
-    val dbList = dbViewModel.list.collectAsState()
+   // val dbList = dbViewModel.list.collectAsState()
     val sum = dbList.value.sumOf {
         it.price * it.count
     }
@@ -86,7 +96,9 @@ fun BasketScreen(
                         key = {
                             it.id
                         }){dbProduct ->
-                            DbItem(productFromDb = dbProduct, dbViewModel = dbViewModel,
+                            DbItem(productFromDb = dbProduct,
+                                dbList = dbList,
+                                onEvent = onEvent,
                                 modifier = Modifier.animateItemPlacement(
                                     spring(
                                         dampingRatio =Spring.DampingRatioMediumBouncy,
@@ -117,7 +129,8 @@ fun BasketScreen(
                 shape = RoundedCornerShape(8.dp),
                 onClick = {
             navController.navigate("animation")
-                dbViewModel.clearDb()
+              //  dbViewModel.clearDb()
+                    onEvent(MainEvent.ClearDb)
             }) {
                 Text(
                     fontFamily = FontFamily(Font(R.font.roboto)),
@@ -128,4 +141,27 @@ fun BasketScreen(
 
         }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewBasketScreen() {
+    val context = LocalContext.current
+    val navController = rememberNavController()
+    val sampleDbList = remember {
+        mutableStateOf(
+            listOf(
+                ProductFromDb(1, "Product 1", 1000, 2000, 1, "image_url"),
+                ProductFromDb(2, "Product 2", 500, 1000, 1, "image_url")
+            )
+        )
+    }
+
+    BasketScreen(
+        Modifier,
+        navController = navController,
+        dbList = sampleDbList,
+        onEvent = {}
+    )
 }
