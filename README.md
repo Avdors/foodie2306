@@ -1,8 +1,16 @@
+The application is made using Jetpack Compose. This is an example of an online store for ordering prepared food, using selections by category, searchable, changing UI depending on conditions.
+
+* Loading given JSON
+* Using DI
+* ROOM used
+
 Приложение выполнено с использование Jetpack Compose.
 Это пример интернет магазина по заказу готовой еды, с использованием отборов по категориям, с возможностью поиска, изменение UI в зависимости от условий.
 * Загрузка данныйх JSON
 * Использование DI
 * Использован ROOM
+
+
   
  ![image](https://github.com/user-attachments/assets/7c6a9574-557c-4734-83ac-f96131a06532)
 
